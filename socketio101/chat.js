@@ -20,9 +20,12 @@ io.on('connection', (socket) => {
         io.emit('messageToClients', { text:msg.text})
     })
 
+    socket.join('level1room')
+    io.of('/').to('level1room').emit('joined',`${socket.id} says i've joined level1room`)
   //  io.of('/admin').emit('welcome',"welcome admin from main channel")
 })
 
+//new namespace listener
 io.of('/admin').on('connection',(socket) => {
     console.log('welcome to admin ns')
     io.of('/admin').emit('welcome',"welcome to admin channel")

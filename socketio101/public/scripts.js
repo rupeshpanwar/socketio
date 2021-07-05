@@ -16,6 +16,10 @@ socket.on('messageFromServer', (dataFromServer) => {
         data: 'hi.. from the client'
     })
 
+    socket.on('joined', (msg) => {
+        console.log(msg)
+    })
+
     document.querySelector('#message-form').addEventListener('submit',(event) => {
         event.preventDefault()
         const newMessage = document.querySelector('#user-message').value
@@ -28,6 +32,7 @@ socket.on('messageFromServer', (dataFromServer) => {
     })
 })
 
+//new namespace listener
 socket2.on('welcome',(msg) => {
     console.log(`hello from socket2 server - ${msg}`)
 })
