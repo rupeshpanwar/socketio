@@ -19,4 +19,11 @@ io.on('connection', (socket) => {
     socket.on('newMessageToServer',(msg) => {
         io.emit('messageToClients', { text:msg.text})
     })
+
+  //  io.of('/admin').emit('welcome',"welcome admin from main channel")
+})
+
+io.of('/admin').on('connection',(socket) => {
+    console.log('welcome to admin ns')
+    io.of('/admin').emit('welcome',"welcome to admin channel")
 })
