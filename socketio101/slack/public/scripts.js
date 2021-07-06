@@ -1,23 +1,29 @@
 const socket = io("http://localhost:9000")
-const socket2 = io("http://localhost:9000/admin")
+
 
 console.log(socket.io)
 
-socket.on('connect',()=>{
+socket.on('connect', () => {
     console.log(socket.id)
 })
 
-socket2.on('connect',()=>{
-    console.log(socket2.id)
-})
+socket.on('nsList', (nsData) => {
+    //console.log('ns data has arrived')
+    let namespacesDiv = document.querySelector(".namespaces")
+    namespacesDiv.innerHTML = ""
+    nsData.forEach((ns) => {
+        namespacesDiv.innerHTML += `<div class="namespace" ns=${ns.endpoint}><img src="${ns.img}"></div>`
+    })
 
-socket.on('connect',(msg)=>{
-    console.log(msg)
-})
+    console.log(document.getElementsByClassName('namespace'));
 
+    Array.from(document.getElementsByClassName('namespace')).forEach((element) => {
+        element.addEventListener('click', (e) => {
+            const nsEndpoint = element.getAttribute('ns')
+            console.log(`${nsEndpoint} i should go now`)
+        })
+    })
 
-socket2.on('connect',(msg)=>{
-    console.log(msg)
 })
 
 
@@ -29,20 +35,15 @@ socket.on('messageFromServer', (dataFromServer) => {
         data: 'hi..data from the client'
     })
 
-   
-    document.querySelector('#message-form').addEventListener('submit',(event) => {
+
+    document.querySelector('#message-form').addEventListener('submit', (event) => {
         event.preventDefault()
         const newMessage = document.querySelector('#user-message').value
-        socket.emit('newMessageToServer',{text: newMessage})
+        socket.emit('newMessageToServer', { text: newMessage })
     })
 
-    socket.on('messageToClients',(msg) => {
+    socket.on('messageToClients', (msg) => {
         console.log(msg)
         document.querySelector('#messages').innerHTML += `<li>${msg.text}</li>`
     })
-})
-
-//new namespace listener
-socket2.on('welcome',(msg) => {
-    console.log(`hello from socket2 server - ${msg}`)
 })

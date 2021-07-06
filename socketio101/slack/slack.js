@@ -3,7 +3,7 @@ const express = require('express')
 const socketio = require('socket.io')
 
 const namespaces = require('./data/namespaces')
-console.log(namespaces)
+//console.log(namespaces)
 
 const app = express()
 app.use(express.static(__dirname + '/public'))
@@ -14,23 +14,22 @@ const expressServer = app.listen(9000)
 const io = socketio(expressServer)
 
 io.on('connection', (socket) => {
-    socket.emit('messageFromServer', { data: 'welcome from Socket Server' })
-
-    socket.on('messageToServer', (dataFromClient) => {
-        console.log(dataFromClient)
+    //build array of NS
+    let nsData = namespaces.map((ns) => {
+        return {
+            img: ns.img,
+            endpoint: ns.endpoint
+        }
     })
+    //send the NS list to the client who connects but not all
+    socket.emit('nsList', nsData)
 
-    socket.on('newMessageToServer', (msg) => {
-        io.emit('messageToClients', { text: msg.text })
-    })
-
-    socket.join('level1room')
-    io.of('/').to('level1room').emit('joined', `${socket.id} says i've joined level1room`)
-    //  io.of('/admin').emit('welcome',"welcome admin from main channel")
 })
 
-//new namespace listener
-io.of('/admin').on('connection', (socket) => {
-    console.log('welcome to admin ns')
-    io.of('/admin').emit('welcome', "welcome to admin channel")
+//initialize NS
+namespaces.forEach((namespace) => {
+    //console.log(namespace)
+    io.of(namespace.endpoint).on('connection', (socket) => {
+        console.log(`${socket.id} has join ${namespace.endpoint}`)
+    })
 })
