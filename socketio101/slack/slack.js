@@ -29,7 +29,10 @@ io.on('connection', (socket) => {
 //initialize NS
 namespaces.forEach((namespace) => {
     //console.log(namespace)
-    io.of(namespace.endpoint).on('connection', (socket) => {
-        console.log(`${socket.id} has join ${namespace.endpoint}`)
+    io.of(namespace.endpoint).on('connection', (nsSocket) => {
+        console.log(`${nsSocket.id} has join ${namespace.endpoint}`)
+      //loading the rooms to NSs
+        //console.log(namespaces[0].rooms)
+        nsSocket.emit('nsRoomLoad',namespaces[0].rooms)
     })
 })
