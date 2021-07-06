@@ -27,12 +27,26 @@ io.on('connection', (socket) => {
 })
 
 //initialize NS
-namespaces.forEach((namespace) => {
-    //console.log(namespace)
-    io.of(namespace.endpoint).on('connection', (nsSocket) => {
-        console.log(`${nsSocket.id} has join ${namespace.endpoint}`)
-      //loading the rooms to NSs
-        //console.log(namespaces[0].rooms)
-        nsSocket.emit('nsRoomLoad',namespaces[0].rooms)
+// loop through each namespace and listen for a connection
+namespaces.forEach((namespace)=>{
+    // console.log(namespace)
+    // const thisNs = io.of(namespace.endpoint)
+    io.of(namespace.endpoint).on('connection',(nsSocket)=>{
+        console.log(nsSocket.handshake)
+        const username = nsSocket.handshake.query.username;
+        // console.log(`${nsSocket.id} has join ${namespace.endpoint}`)
+        // a socket has connected to one of our chatgroup namespaces.
+        // send that ns gorup info back
+        nsSocket.emit('nsRoomLoad',namespace.rooms)
+        nsSocket.on('joinRoom',(roomToJoin,numberOfUsersCallback)=>{
+            // deal with history... once we have it
+            console.log(nsSocket.rooms);
+            nsSocket.join(roomToJoin)
+            io.of('/wiki').in(roomToJoin).clients((error, clients)=>{
+                console.log(clients.length)
+                numberOfUsersCallback(clients.length);
+            })
+         
+        })
     })
 })

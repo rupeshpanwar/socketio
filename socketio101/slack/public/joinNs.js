@@ -1,7 +1,7 @@
 
   function joinNs(endpoint) {
    //join 2nd NS
-    const nsSocket = io(`http://localhost:9000${endpoint}`)
+    nsSocket = io(`http://localhost:9000${endpoint}`)
     //updating the DOM for rooms
     nsSocket.on('nsRoomLoad',(nsRooms)=>{
         let roomList = document.querySelector('.room-list')
@@ -25,6 +25,12 @@
                 console.log("someone clicked ",e.target.innerText)
             })
         })
+
+        //join room automatically ..first time here
+        const topRoom = document.querySelector('.room')
+        const topRoomName = topRoom.innerText
+        console.log(topRoomName)
+        joinRoom(topRoom)
     })
 
     
